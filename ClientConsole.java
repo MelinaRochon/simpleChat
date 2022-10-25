@@ -86,7 +86,8 @@ public class ClientConsole implements ChatIF
       while (true) 
       {
         message = fromConsole.nextLine();
-        client.handleMessageFromClientUI(message);
+        //client.handleMessageFromClientUI(message);
+        client.handleMessageFromTheClientConsole(message);
       }
     } 
     catch (Exception ex) 
@@ -113,7 +114,7 @@ public class ClientConsole implements ChatIF
   /**
    * This method is responsible for the creation of the Client UI.
    *
-   * @param args[0] The host to connect to.
+   * @param args[0] The port to connect to.
    */
   public static void main(String[] args) 
   {

@@ -95,6 +95,81 @@ public class ChatClient extends AbstractClient
   }
   
   /**
+   * Cette méthode implémente des commandes spécifiques entrées par le client, commençant par 
+   * le symbole '#'. On utilise le cas switch() pour considérer les commandes : #quit,
+   *  #logoff,#sethost, #setport, #login, #gethost, #getport 
+   * @param msg
+   */
+  public void handleMessageFromTheClientConsole(String msg) {
+	  if (msg.startsWith("#")) {
+		  String[] argument = msg.split(" ");
+		  String controle = argument[0];
+		  switch (controle) {
+		   
+		  	// provoque arrêt normal du client et arrêt du programme
+		  	case "#quit" :
+		  		quit();
+		  		break;
+		  	
+		  	// provoque déconnexion du client du serveur, mais pas la fermeture
+		  	case "#logoff" :
+		  		try {
+		  			closeConnection();
+		  		} catch(IOException exception) {
+		  			System.out.println("Erreur en fermant la connexion.");
+		  		}
+		  	
+		  	// appelle méthode sethost(). Commande autorisé seulement si client est
+		  	// déconnecté, sinon message d'erreur
+		  	case "#sethost" :
+		  		if (this.isConnected()) {
+		  			System.out.println("Commande non autorisé car vous êtes déjà connecté.");
+		  		} else {
+		  			this.setHost(argument[1]);
+		  		}
+		  		break;
+		  	
+		  	// appelle méthode setPort(). Commande autorisé seulement si client est
+		  	// déconnecté, sinon message d'erreur
+		  	case "#setport" :
+		  		if (this.isConnected()) {
+		  			System.out.println("Commande non autorisé car vous êtes déjà connecté.");
+		  		} else {
+		  			this.setPort(Integer.parseInt(argument[1]));
+		  		}
+		  		break;
+		  	
+		  	// connecte client au serveur. Autorisé seulement si client n'est pas
+		  	// connecté, sinon message d'erreur
+		  	case "#login" :
+		  		if (this.isConnected()) {
+		  			System.out.println("Commande non autorisé car vous êtes déjà connecté.");
+		  		} else {
+		  			try {
+		  				this.openConnection(); // ouvre connexion
+		  			} catch (IOException exception) {
+		  				System.out.println("Pas capable d'ouvrir une connexion avec le serveur.");
+		  			}
+		  		}
+		  		break;
+		  		
+		  	// affiche nom de l`hôte actuel
+		  	case "#gethost" :
+		  		System.out.println("Le nom de l'hôte actuel est : " + this.getHost());
+		  		break;
+		  	
+		  	// affiche numéro de port actuel
+		  	case "#getport" :
+		  		System.out.println("Le numéro de port actuel est : " + this.getPort());
+		  		break;
+		  		
+		  } 
+	  } else {
+		  handleMessageFromClientUI(msg);
+	  }
+  }
+  
+  /**
    * This method terminates the client.
    */
   public void quit()
