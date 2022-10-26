@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 import client.*;
 import common.*;
+import server.ChatServer;
 
 /**
  * This class constructs the UI for a chat client.  It implements the
@@ -35,7 +36,6 @@ public class ClientConsole implements ChatIF
   ChatClient client;
   
   
-  
   /**
    * Scanner to read from the console
    */
@@ -55,8 +55,6 @@ public class ClientConsole implements ChatIF
     try 
     {
       client= new ChatClient(host, port, this);
-      
-      
     } 
     catch(IOException exception) 
     {
@@ -87,7 +85,8 @@ public class ClientConsole implements ChatIF
       {
         message = fromConsole.nextLine();
         //client.handleMessageFromClientUI(message);
-        client.handleMessageFromTheClientConsole(message);
+        client.handleMessageFromClientUI(message);
+        //client.hand
       }
     } 
     catch (Exception ex) 
@@ -118,7 +117,21 @@ public class ClientConsole implements ChatIF
    */
   public static void main(String[] args) 
   {
-    String host = "localhost";
+	  String host = "";
+	  int port = 0;
+	  try {
+		  host = args[0];
+		  port = Integer.parseInt(args[1]);
+	  } catch (ArrayIndexOutOfBoundsException e) {
+		  host = "localhost";
+		  port = DEFAULT_PORT;
+	  } catch (NumberFormatException ex) {
+		  port = DEFAULT_PORT;
+	  }
+	  
+	  ClientConsole chat = new ClientConsole(host, port);
+	  chat.accept();
+    /**String host = "localhost";
     int port=0;
 
     /*try
@@ -128,7 +141,7 @@ public class ClientConsole implements ChatIF
     catch(ArrayIndexOutOfBoundsException e)
     {
       host = "localhost";
-    }*/
+    }
     try
     {
       port = Integer.parseInt(args[0]); //Get port from command line
@@ -140,7 +153,8 @@ public class ClientConsole implements ChatIF
     }
 	
     ClientConsole chat= new ClientConsole(host, port);
-    chat.accept();  //Wait for console data
+    chat.accept();  //Wait for console data**/
+	  
   }
 }
 //End of ConsoleChat class

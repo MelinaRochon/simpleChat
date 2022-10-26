@@ -70,15 +70,19 @@ public class EchoServer extends AbstractServer {
   	/**
 	 * Méthode qui est appelé chaque fois qu'un nouveau client se connecte au serveur 
 	 */
+	@Override
 	public void clientConnected(ConnectionToClient client) {
-		System.out.println("Un nouveau client vient de se connecter au serveur");
+		//System.out.println("Un nouveau client, " + client + ", vient de se connecter au serveur");
+		this.sendToAllClients("Un nouveau client, " + client + ", vient de se connecter au serveur");
 	}
 	
 	/**
 	 * Méthode qui est appelée quand un client se déconnecte du serveur. 
 	 */
-	public void clientDisconnected(ConnectionToClient client) {
-			System.out.println("Un client vient de se déconnecter du serveur");
+	@Override
+	public synchronized void clientDisconnected(ConnectionToClient client) {
+			//System.out.println("Un client, " + client + ", vient de se déconnecter du serveur");
+		this.sendToAllClients(client + " ses déconnecté.");
 			
 	}
 	

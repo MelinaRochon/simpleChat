@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.Scanner;
 
 import common.*;
+import server.ChatServer;
 import server.UserServer;
 
 /**
@@ -19,67 +20,60 @@ import server.UserServer;
  * @version September 2020
  */
 public class ServerConsole implements ChatIF {
-
+	
+	//Class variables *************************************************
+	  
+	/**
+	 * The default port to connect on.
+	 */
 	final public static int DEFAULT_PORT = 5555;
-	
-	UserServer user;
-	
-	// Constructeur de la classe
-	public ServerConsole(int port) {
+	  
+	//UserServer server;
+	ChatServer server;
+	public ServerConsole (int port) {
+		server = new ChatServer(port);
 		try {
-			user = new UserServer(port);
-			user.listen();
-		} catch(IOException ex) {
-			System.out.println("Error: Can't setup connection!"
-	                + " Terminating client.");
-			System.exit(1);
-		} 
+			server.listen();
+		} catch(IOException e) {
+			System.out.println("ERREUR. Impossible d'ecouter des clients");
+		}
 	}
 	
-	/**
-	* Cette méthode attend pour des entrées de la console. Une fois 
-	* reçus, ça l'envoie au "client's message handler"
-	*/
 	public void accept() {
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			String msg;
-			while (true) {
-				msg = br.readLine();
-				user.handleMessageFromServerUI(msg);
+			while ((msg = br.readLine()) != null) {
+				server.handleMessageFromServerConsole(msg);
+				//server.handleMessageFromServerUI(msg);
+				this.display(msg);
+				
 			}
 		} catch (Exception e) {
-			System.out.println ("Une erreur inattendu ses produite en lisant la console.");
+			System.out.println("Erreur imprévue en lisant la console.");
 		}
-	}
-	
-	@Override
-	/**
-	* Cette méthode fait un "override" de la méthode dans l'interface ChatIF.
-	* Il montre un message sur l'écran. 
-	* @param message Le string a être visualisé.
-	*/
-	public void display(String message) {
-		// TODO Auto-generated method stub
-		System.out.println(message);
 	}
 
-	/**
-	 * Cette méthode est responsable pour la création du ServerConsole.
-	 * 
-	 * @param args[0] Le port à connecter.
-	*/
-	public static void main(String[] args) {
-		ServerConsole server_console;
-		try {
-			// Entre le numéro de port dans la ligne de commande
-			server_console = new ServerConsole(Integer.parseInt(args[0]));
-		} catch (NumberFormatException exception) {
-			System.out.println("Valeur entrée n'est pas bon. Utilise la valeur de port : " + DEFAULT_PORT);
-			server_console = new ServerConsole(DEFAULT_PORT);
-		} catch (ArrayIndexOutOfBoundsException exception) {
-			server_console = new ServerConsole(DEFAULT_PORT);
+	@Override
+	public void display(String message) {
+		// TODO Auto-generated method stub
+		if (message.startsWith("#")) {
+			return;
 		}
+		System.out.println("SERVER MSG> " + message);
+		//System.out.println(message);
+		
+	}
+	
+	public static void main(String[] args) {
+		int port = 0;
+		try {
+			port = Integer.parseInt(args[0]);
+		} catch (Throwable t) {
+			port = DEFAULT_PORT;
+		}
+		
+		ServerConsole server_console = new ServerConsole(port);
 		server_console.accept();
 	}
 }
